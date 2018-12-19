@@ -15,6 +15,7 @@ subroutine ask_param(p)
 	read(10,*) p%N
 	read(10,*) p%Nt
 	read(10,*) p%toggle
+	read(10,*) p%choice_error
 	close(10)
 
 end subroutine ask_param
@@ -117,21 +118,32 @@ subroutine error_computation(p,T,T_a,Dx,R)
 	real,dimension(p%N+1),intent(in):: T,T_a
 	real,dimension(p%N+1):: E_n
 	real,intent(in):: Dx,R
-	real:: Error,E
+	real:: Error,E1,E2,Einf
 	integer:: i
 	
 	!instructions
-	E=0.
+	E1=0.
+	E2=0.
+	Einf=0.
 	Error=0.
 	do i=1,p%N+1
 		E_n=0.
 	end do
 	
 	do i=1,p%N+1
-		E_n(i)=abs(T(i)-T_a(i))
-		E=E+E_n(i)
+		E_n(i)=T(i)-T_a(i)
+		E1=E1+abs(E_n(i))
+		E2=E2+(E_n(i))**2
 	end do
-	Error=sqrt(E/(p%N+1))
+	Einf=maxval(abs(E_n))
+	
+	if (p%choice_error==1) then
+		Error=E1/(p%N+1)
+	else if (p%choice_error==2) then
+		Error=sqrt(E2/(p%N+1))
+	else
+		Error=Einf
+	end if
 	
 	print*, 'Dx =', Dx, 'Error =', Error, 'R =', R
 	

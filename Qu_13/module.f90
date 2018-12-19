@@ -6,6 +6,7 @@ type params
 	real:: T_init,T_1 !initial temperature, left bound cond
 	integer:: N,Nt !nombre subdivisions spatiales/temporelles
 	logical:: toggle !sauvegarde frequentielle ou non
+	integer:: choice_error !p-norme pour l'erreur
 end type params
 
 end module parameters
